@@ -57,14 +57,11 @@ public class NotificationListener extends NotificationListenerService {
         Intent intent = new Intent(NotificationConstants.INTENT);
         intent.putExtra(NotificationConstants.PACKAGE_NAME, packageName);
         intent.putExtra(NotificationConstants.ID, notification.getId());
-        intent.putExtra(NotificationConstants.CAN_REPLY, action != null);
 
         if (NotificationUtils.getQuickReplyAction(notification.getNotification(), packageName) != null) {
             cachedNotifications.put(notification.getId(), action);
         }
 
-        intent.putExtra(NotificationConstants.NOTIFICATIONS_ICON, appIcon);
-//        intent.putExtra(NotificationConstants.NOTIFICATIONS_LARGE_ICON, largeIcon);
 
         if (extras != null) {
             CharSequence title = extras.getCharSequence(Notification.EXTRA_TITLE);
@@ -73,17 +70,6 @@ public class NotificationListener extends NotificationListenerService {
             intent.putExtra(NotificationConstants.NOTIFICATION_TITLE, title == null ? null : title.toString());
             intent.putExtra(NotificationConstants.NOTIFICATION_CONTENT, text == null ? null : text.toString());
             intent.putExtra(NotificationConstants.IS_REMOVED, isRemoved);
-            //            TODO: For time being removing this so that the data packet size is limited
-//            intent.putExtra(NotificationConstants.HAVE_EXTRA_PICTURE, extras.containsKey(Notification.EXTRA_PICTURE));
-
-
-
-//            if (extras.containsKey(Notification.EXTRA_PICTURE)) {
-//                Bitmap bmp = (Bitmap) extras.get(Notification.EXTRA_PICTURE);
-//                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-//                intent.putExtra(NotificationConstants.EXTRAS_PICTURE, stream.toByteArray());
-//            }
         }
         sendBroadcast(intent);
     }
