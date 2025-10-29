@@ -59,8 +59,16 @@ public class NotificationListenerServicePlugin implements FlutterPlugin, Activit
         if (call.method.equals("isPermissionGranted")) {
             result.success(isPermissionGranted(context));
         } else if (call.method.equals("requestPermission")) {
-            Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
-            mActivity.startActivityForResult(intent, REQUEST_CODE_FOR_NOTIFICATIONS);
+            if (mActivity != null && !mActivity.isFinishing()) {
+                Intent intent = new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS);
+                mActivity.startActivityForResult(intent, REQUEST_CODE_FOR_NOTIFICATIONS);
+            } else {
+                // The Activity is gone, so we can't show the dialog, we just log it and report back the current permission status, which is the same behavior as canceling the dialog.
+                Log.w("NotificationPlugin", "Activity was null or finishing, cannot request permission.");
+                if (pendingResult != null) {
+                    pendingResult.success(isPermissionGranted(context));
+                }
+            }
         } else if (call.method.equals("sendReply")) {
             final String message = call.argument("message");
             final int notificationId = call.argument("notificationId");
