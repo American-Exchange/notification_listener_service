@@ -140,12 +140,17 @@ public class NotificationListenerServicePlugin implements FlutterPlugin, Activit
     @Override
     public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_CODE_FOR_NOTIFICATIONS) {
-            if (resultCode == Activity.RESULT_OK) {
-                pendingResult.success(true);
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                pendingResult.success(isPermissionGranted(context));
+            if (pendingResult != null) {
+                if (resultCode == Activity.RESULT_OK) {
+                    pendingResult.success(true);
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                    pendingResult.success(isPermissionGranted(context));
+                } else {
+                    pendingResult.success(false);
+                }
             } else {
-                pendingResult.success(false);
+                // Log warning: App was likely killed and restarted
+                Log.w("NotificationPlugin", "onActivityResult called but pendingResult is null. Ignoring.");
             }
             return true;
         }
